@@ -32,10 +32,10 @@
       resolution: 2.0
 
       # The number of iterations required to calculate alignment
-      max_iterations: 30
+      max_iterations: 50
 
       # Number of threads used for parallel computing
-      num_threads: 4
+      num_threads: 8
 
       regularization:
         enable: false

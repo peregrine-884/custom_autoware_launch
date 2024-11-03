@@ -29,26 +29,15 @@
       suppress_sudden_obstacle_stop: true
 
       stop_obstacle_type:
+        unknown: true
+        car: true
+        truck: true
+        bus: true
+        trailer: true
+        motorcycle: true
+        bicycle: true
+        pedestrian: true
         pointcloud: false
-        inside:
-          unknown: true
-          car: true
-          truck: true
-          bus: true
-          trailer: true
-          motorcycle: true
-          bicycle: true
-          pedestrian: true
-
-        outside:
-          unknown: false
-          car: true
-          truck: true
-          bus: true
-          trailer: true
-          motorcycle: true
-          bicycle: true
-          pedestrian: true
 
       cruise_obstacle_type:
         inside:
