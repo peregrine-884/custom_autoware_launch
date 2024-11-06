@@ -76,6 +76,7 @@
     error_rate: 1.0
     timeout: 1.0
 
+# !!!
 # - module: perception
 #   mode: [online, logging_simulation]
 #   type: autonomous
