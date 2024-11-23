@@ -12,7 +12,7 @@
       idling_time: 2.0 # idling time to detect front vehicle starting deceleration [s]
       min_ego_accel_for_rss: -1.0 # ego's acceleration to calculate RSS distance [m/ss]
       min_object_accel_for_rss: -1.0 # front obstacle's acceleration to calculate RSS distance [m/ss]
-      safe_distance_margin : 4.0 # This is also used as a stop margin [m]
+      safe_distance_margin : 6.0 # This is also used as a stop margin [m]
       terminal_safe_distance_margin : 3.0 # Stop margin at the goal. This value cannot exceed safe distance margin. [m]
       hold_stop_velocity_threshold: 0.01 # The maximum ego velocity to hold stopping [m/s]
       hold_stop_distance_threshold: 0.3 # The ego keeps stopping if the distance to stop changes within the threshold [m]
@@ -26,29 +26,18 @@
         enable_approaching: false
         additional_safe_distance_margin: 3.0 # [m]
         min_safe_distance_margin: 3.0 # [m]
-      suppress_sudden_obstacle_stop: true
+      suppress_sudden_obstacle_stop: false
 
       stop_obstacle_type:
+        unknown: true
+        car: true
+        truck: true
+        bus: true
+        trailer: true
+        motorcycle: true
+        bicycle: true
+        pedestrian: true
         pointcloud: false
-        inside:
-          unknown: true
-          car: true
-          truck: true
-          bus: true
-          trailer: true
-          motorcycle: true
-          bicycle: true
-          pedestrian: true
-
-        outside:
-          unknown: false
-          car: true
-          truck: true
-          bus: true
-          trailer: true
-          motorcycle: true
-          bicycle: true
-          pedestrian: true
 
       cruise_obstacle_type:
         inside:
@@ -99,34 +88,26 @@
       stop_obstacle_hold_time_threshold : 1.0 # maximum time for holding closest stop obstacle
 
       # hysteresis for cruise and stop
-      obstacle_velocity_threshold_from_cruise_to_stop : 1.0 # stop planning is executed to the obstacle whose velocity is less than this value [m/s]
-      obstacle_velocity_threshold_from_stop_to_cruise : 1.5 # stop planning is executed to the obstacle whose velocity is less than this value [m/s]
+      obstacle_velocity_threshold_from_cruise_to_stop : 3.0 # stop planning is executed to the obstacle whose velocity is less than this value [m/s]
+      obstacle_velocity_threshold_from_stop_to_cruise : 3.5 # stop planning is executed to the obstacle whose velocity is less than this value [m/s]
 
       # if crossing vehicle is determined as target obstacles or not
       crossing_obstacle:
-        obstacle_velocity_threshold : 1.0 # velocity threshold for crossing obstacle for cruise or stop [m/s]
-        obstacle_traj_angle_threshold : 0.523599 # [rad] = 30 [deg], yaw threshold of crossing obstacle against the nearest trajectory point for cruise or stop
+        obstacle_velocity_threshold : 3.0 # velocity threshold for crossing obstacle for cruise or stop [m/s]
+        obstacle_traj_angle_threshold : 1.22 # [rad] = 70 [deg], yaw threshold of crossing obstacle against the nearest trajectory point for cruise or stop
 
       stop:
         max_lat_margin: 0.3 # lateral margin between the obstacles and ego's footprint
         max_lat_margin_against_unknown: 0.3 # lateral margin between the unknown obstacles and ego's footprint
-        min_velocity_to_reach_collision_point: 2.0 # minimum velocity margin to calculate time to reach collision [m/s]
-        outside_obstacle:
-          max_lateral_time_margin: 4.5 # time threshold of lateral margin between the obstacles and ego's footprint [s]
-          num_of_predicted_paths: 1 # number of the highest confidence predicted path to check collision between obstacle and ego
-          pedestrian_deceleration_rate: 0.5 # planner perceives pedestrians will stop with this rate to avoid unnecessary stops [m/ss]
-          bicycle_deceleration_rate: 0.5 # planner perceives bicycles will stop with this rate to avoid unnecessary stops [m/ss]
         crossing_obstacle:
-          collision_time_margin : 1.0 # time threshold of collision between obstacle adn ego for cruise or stop [s]
+          collision_time_margin : 4.0 # time threshold of collision between obstacle adn ego for cruise or stop [s]
 
       cruise:
         max_lat_margin: 1.0 # lateral margin between obstacle and trajectory band with ego's width
         outside_obstacle:
-          obstacle_velocity_threshold : 1.5 # minimum velocity threshold of obstacles outside the trajectory to cruise or stop [m/s]
-          ego_obstacle_overlap_time_threshold : 0.2 #  time threshold to decide cut-in obstacle for cruise or stop [s]
-          max_prediction_time_for_collision_check : 10.0 # prediction time to check collision between obstacle and ego
-          max_lateral_time_margin: 5.0 # time threshold of lateral margin between obstacle and trajectory band with ego's width [s]
-          num_of_predicted_paths: 3 # number of the highest confidence predicted path to check collision between obstacle and ego
+          obstacle_velocity_threshold : 3.5 # minimum velocity threshold of obstacles outside the trajectory to cruise or stop [m/s]
+          ego_obstacle_overlap_time_threshold : 2.0 #  time threshold to decide cut-in obstacle for cruise or stop [s]
+          max_prediction_time_for_collision_check : 20.0 # prediction time to check collision between obstacle and ego
         yield:
           enable_yield: true
           lat_distance_threshold: 5.0 # lateral margin between obstacle in neighbor lanes and trajectory band with ego's width for yielding
