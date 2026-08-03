@@ -11,7 +11,7 @@
 
     <group>
       <push-ros-namespace namespace="top"/>
-      <include file="$(find-pkg-share common_sensor_launch)/launch/velodyne_VLS128.launch.xml">
+      <include file="$(find-pkg-share common_agilex_sensor_launch)/launch/velodyne_VLS128.launch.xml">
         <arg name="max_range" value="250.0"/>
         <arg name="sensor_frame" value="velodyne_top"/>
         <arg name="sensor_ip" value="192.168.1.201"/>
@@ -26,7 +26,7 @@
 
     <group>
       <push-ros-namespace namespace="left"/>
-      <include file="$(find-pkg-share common_sensor_launch)/launch/velodyne_VLP16.launch.xml">
+      <include file="$(find-pkg-share common_agilex_sensor_launch)/launch/velodyne_VLP16.launch.xml">
         <arg name="max_range" value="5.0"/>
         <arg name="sensor_frame" value="velodyne_left"/>
         <arg name="sensor_ip" value="192.168.1.202"/>
@@ -43,7 +43,7 @@
 
     <group>
       <push-ros-namespace namespace="right"/>
-      <include file="$(find-pkg-share common_sensor_launch)/launch/velodyne_VLP16.launch.xml">
+      <include file="$(find-pkg-share common_agilex_sensor_launch)/launch/velodyne_VLP16.launch.xml">
         <arg name="max_range" value="5.0"/>
         <arg name="sensor_frame" value="velodyne_right"/>
         <arg name="sensor_ip" value="192.168.1.203"/>
@@ -60,7 +60,7 @@
 
     <group>
       <push-ros-namespace namespace="rear"/>
-      <include file="$(find-pkg-share common_sensor_launch)/launch/velodyne_VLP16.launch.xml">
+      <include file="$(find-pkg-share common_agilex_sensor_launch)/launch/velodyne_VLP16.launch.xml">
         <arg name="max_range" value="1.5"/>
         <arg name="sensor_frame" value="velodyne_rear"/>
         <arg name="sensor_ip" value="192.168.1.204"/>
@@ -75,7 +75,7 @@
       </include>
     </group>
 
-    <include file="$(find-pkg-share sample_sensor_kit_launch)/launch/pointcloud_preprocessor.launch.py">
+    <include file="$(find-pkg-share agilex_sensor_kit_launch)/launch/pointcloud_preprocessor.launch.py">
       <arg name="base_frame" value="base_link"/>
       <arg name="use_intra_process" value="true"/>
       <arg name="use_multithread" value="true"/>

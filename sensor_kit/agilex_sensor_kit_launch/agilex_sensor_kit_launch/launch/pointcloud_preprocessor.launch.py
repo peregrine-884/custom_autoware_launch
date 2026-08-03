@@ -73,7 +73,7 @@ def generate_launch_description():
         "concatenate_and_time_sync_node_param_path",
         PathJoinSubstitution(
             [
-                FindPackageShare("sample_sensor_kit_launch"),
+                FindPackageShare("agilex_sensor_kit_launch"),
                 "config",
                 "concatenate_and_time_sync_node.param.yaml",
             ]

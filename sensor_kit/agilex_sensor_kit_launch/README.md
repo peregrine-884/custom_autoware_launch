@@ -1,1 +1,1 @@
-# sample_sensor_kit_launch
+# agilex_sensor_kit_launch
