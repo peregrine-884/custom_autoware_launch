@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef COMMON_AGILEX_VEHICLE__AGILEX_JOY_CONTROLLER_HPP_
-#define COMMON_AGILEX_VEHICLE__AGILEX_JOY_CONTROLLER_HPP_
+#ifndef COMMON_AGILEX_VEHICLE__AGILEX_CONTROLLER_HPP_
+#define COMMON_AGILEX_VEHICLE__AGILEX_CONTROLLER_HPP_
 
 #include <string>
 
@@ -79,4 +79,4 @@ private:
 
 }  // namespace common_agilex_vehicle
 
-#endif  // COMMON_AGILEX_VEHICLE__AGILEX_JOY_CONTROLLER_HPP_
+#endif  // COMMON_AGILEX_VEHICLE__AGILEX_CONTROLLER_HPP_

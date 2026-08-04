@@ -18,7 +18,7 @@ find_package(scout_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 add_executable(agilex_joy_controller
-  src/agilex_joy_controller.cpp
+  src/agilex_controller.cpp
 )
 target_include_directories(agilex_joy_controller PRIVATE include)
 ament_target_dependencies(agilex_joy_controller

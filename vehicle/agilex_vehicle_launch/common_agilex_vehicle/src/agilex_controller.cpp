@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "common_agilex_vehicle/agilex_joy_controller.hpp"
+#include "common_agilex_vehicle/agilex_controller.hpp"
 
 #include <algorithm>
 #include <chrono>
