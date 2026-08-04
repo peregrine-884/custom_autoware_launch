@@ -4,16 +4,23 @@
   <group>
     <push-ros-namespace namespace="imu"/>
 
-    <!-- <group>
-      <push-ros-namespace namespace="tamagawa"/>
-      <node pkg="tamagawa_imu_driver" name="tag_serial_driver" exec="tag_serial_driver" if="$(var launch_driver)">
-        <remap from="imu/data_raw" to="imu_raw"/>
-        <param name="port" value="/dev/imu"/>
-        <param name="imu_frame_id" value="tamagawa/imu_link"/>
-      </node>
-    </group> -->
+    <!-- XSens IMUドライバ -->
+    <arg
+      name="imu_driver_param_file"
+      default="$(find-pkg-share agilex_sensor_kit_launch)/config/xsens_mti_node.yaml"
+    />
+    <node
+      pkg="bluespace_ai_xsens_mti_driver"
+      exec="xsens_mti_node"
+      name="xsens_mti_node"
+      output="screen"
+      if="$(var launch_driver)"
+    >
+      <param from="$(var imu_driver_param_file)"/>
+    </node>
 
-    <arg name="imu_raw_name" default="tamagawa/imu_raw"/>
+    <!-- IMUセンサーのデータを補正する -->
+    <arg name="imu_raw_name" default="/imu/data"/>
     <arg name="imu_corrector_param_file" default="$(find-pkg-share agilex_sensor_kit_description)/config/imu_corrector.param.yaml"/>
     <include file="$(find-pkg-share autoware_imu_corrector)/launch/imu_corrector.launch.xml">
       <arg name="input_topic" value="$(var imu_raw_name)"/>
@@ -21,6 +28,7 @@
       <arg name="param_file" value="$(var imu_corrector_param_file)"/>
     </include>
 
+    <!-- ジャイロセンサーのバイアスを推定・監視する -->
     <include file="$(find-pkg-share autoware_imu_corrector)/launch/gyro_bias_estimator.launch.xml">
       <arg name="input_imu_raw" value="$(var imu_raw_name)"/>
       <arg name="input_odom" value="/localization/kinematic_state"/>
