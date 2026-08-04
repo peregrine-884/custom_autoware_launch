@@ -14,6 +14,7 @@ find_package(autoware_control_msgs REQUIRED)
 find_package(autoware_vehicle_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(scout_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 add_executable(agilex_joy_controller
@@ -28,7 +29,17 @@ ament_target_dependencies(agilex_joy_controller
   sensor_msgs
 )
 
-install(TARGETS agilex_joy_controller
+add_executable(agilex_vehicle_interface
+  src/agilex_vehicle_interface.cpp
+)
+target_include_directories(agilex_vehicle_interface PRIVATE include)
+ament_target_dependencies(agilex_vehicle_interface
+  autoware_vehicle_msgs
+  rclcpp
+  scout_msgs
+)
+
+install(TARGETS agilex_joy_controller agilex_vehicle_interface
   DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY config launch

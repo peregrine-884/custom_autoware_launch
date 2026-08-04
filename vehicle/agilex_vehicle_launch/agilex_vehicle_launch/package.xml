@@ -10,6 +10,8 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
+  <exec_depend>common_agilex_vehicle</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

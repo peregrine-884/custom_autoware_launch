@@ -1,0 +1,11 @@
+agilex_vehicle_interface:
+  ros__parameters:
+    # Convert Scout feedback to Autoware vehicle status.
+    gear_command_topic: /control/command/gear_cmd
+    hazard_lights_command_topic: /control/command/hazard_lights_cmd
+    light_command_topic: /light_control
+    scout_status_topic: /scout_status
+    base_frame_id: base_link
+    wheel_base: 0.46
+    max_steering_angle: 0.7
+    stopped_velocity_threshold: 0.01

@@ -13,6 +13,7 @@
   <depend>autoware_vehicle_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>rclcpp</depend>
+  <depend>scout_msgs</depend>
   <depend>sensor_msgs</depend>
 
   <exec_depend>joy</exec_depend>
