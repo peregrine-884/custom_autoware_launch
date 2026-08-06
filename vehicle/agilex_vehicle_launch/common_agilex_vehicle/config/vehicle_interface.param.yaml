@@ -9,3 +9,5 @@ agilex_vehicle_interface:
     wheel_base: 0.46
     max_steering_angle: 0.7
     stopped_velocity_threshold: 0.01
+    # Retry startup light-off command until Scout reports that both lights are off.
+    startup_light_command_retry_interval: 0.5

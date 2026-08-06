@@ -41,6 +41,8 @@ private:
   void hazard_lights_command_callback(
     const autoware_vehicle_msgs::msg::HazardLightsCommand::ConstSharedPtr msg);
   void scout_status_callback(const scout_msgs::msg::ScoutStatus::ConstSharedPtr msg);
+  void apply_hazard_lights_command(uint8_t command_value);
+  void publish_startup_light_off_command();
 
   std::string base_frame_id_;
   std::string gear_command_topic_;
@@ -50,6 +52,7 @@ private:
   double wheel_base_;
   double max_steering_angle_;
   double stopped_velocity_threshold_;
+  double startup_light_command_retry_interval_;
 
   uint8_t current_gear_{autoware_vehicle_msgs::msg::GearReport::PARK};
   uint8_t saved_front_light_mode_{scout_msgs::msg::ScoutLightCmd::LIGHT_CONST_OFF};
@@ -59,6 +62,11 @@ private:
   bool light_status_received_{false};
   bool hazard_requested_{false};
   bool light_restore_pending_{false};
+  bool startup_light_initialization_complete_{false};
+  bool startup_light_off_command_sent_{false};
+  uint8_t pending_hazard_command_{
+    autoware_vehicle_msgs::msg::HazardLightsCommand::NO_COMMAND};
+  rclcpp::Time last_startup_light_command_time_{0, 0, RCL_ROS_TIME};
 
   rclcpp::Subscription<autoware_vehicle_msgs::msg::GearCommand>::SharedPtr gear_command_sub_;
   rclcpp::Subscription<autoware_vehicle_msgs::msg::HazardLightsCommand>::SharedPtr

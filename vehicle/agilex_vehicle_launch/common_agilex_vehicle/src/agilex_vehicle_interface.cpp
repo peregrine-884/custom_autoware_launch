@@ -36,8 +36,12 @@ AgilexVehicleInterface::AgilexVehicleInterface(const rclcpp::NodeOptions & optio
   wheel_base_ = declare_parameter<double>("wheel_base", 0.46);
   max_steering_angle_ = declare_parameter<double>("max_steering_angle", 0.7);
   stopped_velocity_threshold_ = declare_parameter<double>("stopped_velocity_threshold", 0.01);
+  startup_light_command_retry_interval_ =
+    declare_parameter<double>("startup_light_command_retry_interval", 0.5);
 
-  if (wheel_base_ <= 0.0 || max_steering_angle_ <= 0.0 || stopped_velocity_threshold_ < 0.0) {
+  if (wheel_base_ <= 0.0 || max_steering_angle_ <= 0.0 || stopped_velocity_threshold_ < 0.0 ||
+    startup_light_command_retry_interval_ <= 0.0)
+  {
     throw std::invalid_argument("Invalid vehicle status conversion parameter");
   }
 
@@ -87,9 +91,20 @@ void AgilexVehicleInterface::hazard_lights_command_callback(
     return;
   }
 
+  if (!startup_light_initialization_complete_) {
+    pending_hazard_command_ = msg->command;
+    return;
+  }
+
+  apply_hazard_lights_command(msg->command);
+}
+
+void AgilexVehicleInterface::apply_hazard_lights_command(uint8_t command_value)
+{
+  using HazardLightsCommand = autoware_vehicle_msgs::msg::HazardLightsCommand;
   scout_msgs::msg::ScoutLightCmd command;
   command.cmd_ctrl_allowed = true;
-  if (msg->command == HazardLightsCommand::ENABLE) {
+  if (command_value == HazardLightsCommand::ENABLE) {
     if (!hazard_requested_ && !light_status_received_) {
       RCLCPP_WARN(
         get_logger(), "No Scout light status received; hazard disable will restore lights to off");
@@ -98,7 +113,7 @@ void AgilexVehicleInterface::hazard_lights_command_callback(
     command.rear_mode = scout_msgs::msg::ScoutLightCmd::LIGHT_BREATH;
     hazard_requested_ = true;
     light_restore_pending_ = false;
-  } else if (msg->command == HazardLightsCommand::DISABLE) {
+  } else if (command_value == HazardLightsCommand::DISABLE) {
     command.front_mode = saved_front_light_mode_;
     command.front_custom_value = saved_front_custom_value_;
     command.rear_mode = saved_rear_light_mode_;
@@ -111,10 +126,56 @@ void AgilexVehicleInterface::hazard_lights_command_callback(
   light_command_pub_->publish(command);
 }
 
+void AgilexVehicleInterface::publish_startup_light_off_command()
+{
+  scout_msgs::msg::ScoutLightCmd command;
+  command.cmd_ctrl_allowed = true;
+  command.front_mode = scout_msgs::msg::ScoutLightCmd::LIGHT_CONST_OFF;
+  command.front_custom_value = 0;
+  command.rear_mode = scout_msgs::msg::ScoutLightCmd::LIGHT_CONST_OFF;
+  command.rear_custom_value = 0;
+  light_command_pub_->publish(command);
+}
+
 void AgilexVehicleInterface::scout_status_callback(
   const scout_msgs::msg::ScoutStatus::ConstSharedPtr msg)
 {
-  if (!hazard_requested_) {
+  if (!startup_light_initialization_complete_) {
+    const bool startup_lights_off =
+      msg->light_control_enabled &&
+      msg->front_light_state.mode == scout_msgs::msg::ScoutLightCmd::LIGHT_CONST_OFF &&
+      msg->rear_light_state.mode == scout_msgs::msg::ScoutLightCmd::LIGHT_CONST_OFF;
+
+    if (startup_lights_off) {
+      startup_light_initialization_complete_ = true;
+      saved_front_light_mode_ = msg->front_light_state.mode;
+      saved_front_custom_value_ = msg->front_light_state.custom_value;
+      saved_rear_light_mode_ = msg->rear_light_state.mode;
+      saved_rear_custom_value_ = msg->rear_light_state.custom_value;
+      light_status_received_ = true;
+      RCLCPP_INFO(
+        get_logger(),
+        "Startup light initialization completed: front and rear lights off");
+
+      const uint8_t pending_command = pending_hazard_command_;
+      pending_hazard_command_ = autoware_vehicle_msgs::msg::HazardLightsCommand::NO_COMMAND;
+      if (pending_command != autoware_vehicle_msgs::msg::HazardLightsCommand::NO_COMMAND) {
+        apply_hazard_lights_command(pending_command);
+      }
+    } else {
+      const auto current_time = now();
+      const bool retry_due = !startup_light_off_command_sent_ ||
+        (current_time - last_startup_light_command_time_).seconds() >=
+        startup_light_command_retry_interval_;
+      if (retry_due) {
+        publish_startup_light_off_command();
+        startup_light_off_command_sent_ = true;
+        last_startup_light_command_time_ = current_time;
+      }
+    }
+  }
+
+  if (startup_light_initialization_complete_ && !hazard_requested_) {
     if (light_restore_pending_) {
       const bool restoration_complete =
         msg->front_light_state.mode == saved_front_light_mode_ &&
