@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
   <arg name="joy_device_id" default="0"/>
-  <arg name="can_port" default="can0"/>
-  <arg name="is_scout_mini" default="false"/>
+  <arg name="can_port"/>
+  <arg name="is_scout_mini"/>
   <arg name="controller_param_file" default="$(find-pkg-share common_agilex_vehicle)/config/manual_control.param.yaml"/>
   <arg name="interface_param_file" default="$(find-pkg-share common_agilex_vehicle)/config/vehicle_interface.param.yaml"/>
 
@@ -22,8 +22,8 @@
     <param from="$(var interface_param_file)"/>
   </node>
 
-  <node pkg="scout_base" exec="scout_base_node" name="scout_base_node" output="screen">
-    <param name="port_name" value="$(var can_port)"/>
-    <param name="is_scout_mini" value="$(var is_scout_mini)"/>
-  </node>
+  <include file="$(find-pkg-share scout_base)/launch/scout_base.launch.py">
+    <arg name="port_name" value="$(var can_port)"/>
+    <arg name="is_scout_mini" value="$(var is_scout_mini)"/>
+  </include>
 </launch>
