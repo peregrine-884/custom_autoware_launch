@@ -5,6 +5,7 @@
   <arg name="is_scout_mini"/>
   <arg name="controller_param_file" default="$(find-pkg-share common_agilex_vehicle)/config/manual_control.param.yaml"/>
   <arg name="interface_param_file" default="$(find-pkg-share common_agilex_vehicle)/config/vehicle_interface.param.yaml"/>
+  <arg name="scout_base_param_file" default="$(find-pkg-share common_agilex_vehicle)/config/scout_base.param.yaml"/>
 
   <node pkg="joy" exec="joy_node" name="joy_node" output="screen">
     <param name="device_id" value="$(var joy_device_id)"/>
@@ -25,5 +26,6 @@
   <include file="$(find-pkg-share scout_base)/launch/scout_base.launch.py">
     <arg name="port_name" value="$(var can_port)"/>
     <arg name="is_scout_mini" value="$(var is_scout_mini)"/>
+    <arg name="parameter_file" value="$(var scout_base_param_file)"/>
   </include>
 </launch>

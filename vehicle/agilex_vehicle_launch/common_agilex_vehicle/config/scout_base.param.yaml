@@ -1,0 +1,5 @@
+scout:
+  ros__parameters:
+    # Autoware localization publishes map -> base_link. Disable the Scout TF
+    # to avoid assigning both odom and map as parents of base_link.
+    publish_odom_tf: false
