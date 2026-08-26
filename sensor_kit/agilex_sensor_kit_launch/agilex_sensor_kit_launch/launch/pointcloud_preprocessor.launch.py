@@ -21,6 +21,7 @@ from launch.conditions import UnlessCondition
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import LoadComposableNodes
+from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
 from launch_ros.parameter_descriptions import ParameterFile
 from launch_ros.substitutions import FindPackageShare
@@ -49,14 +50,29 @@ def launch_setup(context, *args, **kwargs):
         extra_arguments=[{"use_intra_process_comms": LaunchConfiguration("use_intra_process")}],
     )
 
-    # load concat or passthrough filter
+    # Load the concatenation component for a multi-LiDAR configuration.
     concat_loader = LoadComposableNodes(
         composable_node_descriptions=[concat_component],
         target_container=LaunchConfiguration("pointcloud_container_name"),
         condition=IfCondition(LaunchConfiguration("use_concat_filter")),
     )
 
-    return [concat_loader]
+    # The concatenation component requires at least two input topics. For a
+    # single-LiDAR configuration, relay the processed top pointcloud to the
+    # standard concatenated pointcloud topic expected by downstream nodes.
+    passthrough_relay = Node(
+        package="topic_tools",
+        executable="relay",
+        name="single_lidar_pointcloud_relay",
+        arguments=[
+            "/sensing/lidar/top/pointcloud_before_sync",
+            "/sensing/lidar/concatenated/pointcloud",
+        ],
+        condition=UnlessCondition(LaunchConfiguration("use_concat_filter")),
+        output="screen",
+    )
+
+    return [concat_loader, passthrough_relay]
 
 
 def generate_launch_description():
@@ -68,6 +84,7 @@ def generate_launch_description():
     add_launch_arg("base_frame", "base_link")
     add_launch_arg("use_multithread", "False")
     add_launch_arg("use_intra_process", "False")
+    add_launch_arg("use_concat_filter", "False")
     add_launch_arg("pointcloud_container_name", "pointcloud_container")
     add_launch_arg(
         "concatenate_and_time_sync_node_param_path",
