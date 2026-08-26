@@ -11,7 +11,7 @@ agilex_joy_controller:
     speed_limit_step: 0.1
 
     # Joy入力設定（既定値は一般的なXboxコントローラ向け）。
-    deadman_button: 2
+    deadman_button: 3
     speed_up_button: 5
     speed_down_button: 4
     speed_axis: 1
